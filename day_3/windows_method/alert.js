@@ -1,0 +1,2 @@
+// As you have seen at very beginning alert() method displays an alert box with a specified message and an OK button. It is a builtin method and it takes on argument.
+alert('Welcome to 30DaysOfJavaScript')
