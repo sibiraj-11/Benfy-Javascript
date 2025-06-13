@@ -1,0 +1,67 @@
+<body>
+  <div class="container">
+    <h1>30 Days Of JavaScript <span id="year">2025</span></h1>
+    <h2>Challenge List</h2>
+    <div id="datetime"></div>   
+    <ul id="challenges">
+      <li class="challenge completed">Day 1: Introduction</li>
+      <li class="challenge ongoing">Day 2: Data Types</li>
+      <li class="challenge coming">Day 3: Conditions</li>
+      <li class="challenge coming">Day 4: Loops</li>
+      <li class="challenge coming">Day 4: Loops</li>
+      <li class="challenge coming">Day 4: Loops</li>
+      <li class="challenge coming">Day 4: Loops</li>
+      <li class="challenge coming">Day 4: Loops</li>
+    
+    </ul>
+  </div>
+  
+  <script>
+
+const yearSpan = document.getElementById('year');
+function getRandomColor() {
+  return `hsl(${Math.floor(Math.random() * 360)}, 80%, 60%)`;
+}
+setInterval(() => {
+  yearSpan.style.color = getRandomColor();
+}, 1000);
+
+
+const datetimeDiv = document.getElementById('datetime');
+function updateDateTime() {
+  const now = new Date();
+  datetimeDiv.textContent = now.toLocaleString();
+  datetimeDiv.style.padding = "10px 20px";
+  datetimeDiv.style.display = "inline-block";
+  datetimeDiv.style.backgroundColor = getRandomColor();
+  datetimeDiv.style.borderRadius = "5px";
+  datetimeDiv.style.margin = "20px 0";
+  datetimeDiv.style.fontWeight = "bold";
+}
+setInterval(updateDateTime, 1000);
+updateDateTime();
+
+// 3. CHALLENGE STATUS COLORS
+const challengeItems = document.querySelectorAll('.challenge');
+challengeItems.forEach(item => {
+  item.style.color = "#fff";
+  item.style.margin = "8px 0";
+  item.style.padding = "12px"; 
+  item.style.borderRadius = "5px";
+  item.style.fontSize = "1.1rem";   
+  item.style.listStyleType = 'none'
+  if (item.classList.contains('completed')) {
+    item.style.background = 'green';
+  } else if (item.classList.contains('ongoing')) {
+    item.style.background = 'gold';
+    item.style.color = '#222'; 
+  } else if (item.classList.contains('coming')) {
+    item.style.background = 'crimson';
+  }
+});
+
+
+
+  </script>
+
+</body>
