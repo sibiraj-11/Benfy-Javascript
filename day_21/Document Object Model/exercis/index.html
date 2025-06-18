@@ -1,67 +1,179 @@
-<body>
-  <div class="container">
-    <h1>30 Days Of JavaScript <span id="year">2025</span></h1>
-    <h2>Challenge List</h2>
-    <div id="datetime"></div>   
-    <ul id="challenges">
-      <li class="challenge completed">Day 1: Introduction</li>
-      <li class="challenge ongoing">Day 2: Data Types</li>
-      <li class="challenge coming">Day 3: Conditions</li>
-      <li class="challenge coming">Day 4: Loops</li>
-      <li class="challenge coming">Day 4: Loops</li>
-      <li class="challenge coming">Day 4: Loops</li>
-      <li class="challenge coming">Day 4: Loops</li>
-      <li class="challenge coming">Day 4: Loops</li>
+@php
+    $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     
-    </ul>
-  </div>
-  
-  <script>
+    
+@endphp
 
-const yearSpan = document.getElementById('year');
-function getRandomColor() {
-  return `hsl(${Math.floor(Math.random() * 360)}, 80%, 60%)`;
+<style>
+   
+   .btn--loading .submit-text{display: none;}
+
+   .btn--loading .submitting{display: block !important;}
+   .error-message{
+    color: red;
+    text-align: left;
+    position: relative;
+    top: -7px;
 }
-setInterval(() => {
-  yearSpan.style.color = getRandomColor();
-}, 1000);
-
-
-const datetimeDiv = document.getElementById('datetime');
-function updateDateTime() {
-  const now = new Date();
-  datetimeDiv.textContent = now.toLocaleString();
-  datetimeDiv.style.padding = "10px 20px";
-  datetimeDiv.style.display = "inline-block";
-  datetimeDiv.style.backgroundColor = getRandomColor();
-  datetimeDiv.style.borderRadius = "5px";
-  datetimeDiv.style.margin = "20px 0";
-  datetimeDiv.style.fontWeight = "bold";
-}
-setInterval(updateDateTime, 1000);
-updateDateTime();
-
-// 3. CHALLENGE STATUS COLORS
-const challengeItems = document.querySelectorAll('.challenge');
-challengeItems.forEach(item => {
-  item.style.color = "#fff";
-  item.style.margin = "8px 0";
-  item.style.padding = "12px"; 
-  item.style.borderRadius = "5px";
-  item.style.fontSize = "1.1rem";   
-  item.style.listStyleType = 'none'
-  if (item.classList.contains('completed')) {
-    item.style.background = 'green';
-  } else if (item.classList.contains('ongoing')) {
-    item.style.background = 'gold';
-    item.style.color = '#222'; 
-  } else if (item.classList.contains('coming')) {
-    item.style.background = 'crimson';
-  }
-});
 
 
 
-  </script>
+</style>
 
-</body>
+<section class="message-form" id="enquireNow">
+   <div class="form-main-con dots-left-img">
+      <div class="container overlay-content">
+         <div class="form-title-con text-center wow slideInLeft">
+            <h2 class="part">Get in touch</h2>
+            <h2>Send us a Message</h2>
+            <p>Looking  for general  information  or have a specific question. Fill the form below or drop<br> us a line at susan@positka.com.</p>
+         </div>
+         <form  class="form-inner-con wow slideInLeft" id="contactpage">
+             {{ csrf_field() }}
+            <div class="row">
+               <div class="col-lg-4 col-md-4 col-12">
+
+                  <input required class="formVal" type="text" placeholder="Name *" name="Name" id="name"  onkeypress="return alphaOnly(event)" /> 
+
+                  <input type="hidden" name="source" value="{{ $page_source ?? '' }}">
+                  <input type="hidden" name="campaign" value="{{ $campaign ?? '' }}">
+                  <input type="hidden" name="url" value="{{ $url ?? '' }}">
+                  
+                  <input type="hidden" name="website" value="Positka Website">
+                  
+                  <input type="hidden" name="URL" value="Contact Us page">
+
+
+                  <input type="hidden" id="g-recaptcha-response" class="formVal" name="g-recaptcha-response">
+                   <input type="hidden" id="token" name="token" class="formVal" value="">
+
+
+               </div>
+               <div class="col-lg-4 col-md-4 col-12">
+                  <input required class="formVal phoneValidate" data-type="email" type="email"  placeholder="Email *" name="Email" id="email" > 
+                  <div class="error-message"></div>
+               </div>
+               <div class="col-lg-4 col-md-4 col-12">
+
+                  <input required class="formVal phoneValidate" data-type="phone" placeholder="Phone *" type="number" name="Phone" id="phone"  onkeypress="return isNumber(event)"  />
+                  <div class="error-message"></div>
+
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-lg-12">
+                  <textarea class="formVal" class="w-100" name="Message" placeholder="Message" rows="3" name="comments" id="comments"></textarea>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-lg-12 text-center">
+                  <button type="submit" id="submit" class="contact-btn btn--submit">
+                     <span class="submit-text">Submit</span>
+                     <span class="submitting d-none">Submitting...</span>
+               </button>
+               </div>
+            </div>
+         </form>
+      </div>
+   </div>
+</section>
+
+<script src="/assets/js/contact.js"></script>
+
+<script>
+
+var hasErrors = false;
+
+    function validateForm(formElement) {
+        
+
+        // Reset the hasErrors variable to false
+        hasErrors = false;
+
+        // Select all input elements within the form
+        const inputElements = formElement.querySelectorAll('.phoneValidate');
+
+        inputElements.forEach(inputElement => {
+            const inputValue = inputElement.value;
+
+            // Check if the input matches the specific class and type number
+            if (inputElement.classList.contains('phoneValidate')) {
+                const inputType = inputElement.getAttribute('data-type');
+                const errorMessageElement = inputElement.nextElementSibling;
+                
+                // Validate phone number inputs
+                if (inputType === 'phone') {
+                    // Remove any non-numeric characters from the input
+                    const numericValue = inputValue.replace(/[^0-9]/g, '');
+
+                    // Display an error message if the input is empty
+                    if (numericValue.length === 0) {
+                        errorMessageElement.textContent = 'Phone number cannot be empty.';
+                        hasErrors = true;
+                    } else {
+                        const maxLength = 16;
+
+                        // Display an error message if the input exceeds a certain length
+                        if (numericValue.length > maxLength) {
+                            errorMessageElement.textContent = 'This is not a valid Phone Number.';
+                            hasErrors = true;
+                        } else {
+                            errorMessageElement.textContent = '';
+                        }
+                    }
+                }
+                
+                // Validate email inputs
+                if (inputType === 'email') {
+                    // Check for the presence of '@' and '.' in the input
+                    if (!inputValue.includes('@') || !inputValue.includes('.')) {
+                        errorMessageElement.textContent = 'Invalid email format.';
+                        hasErrors = true;
+                    } else {
+                        errorMessageElement.textContent = '';
+                    }
+                }
+            }
+        });
+
+        return hasErrors;
+    }
+
+    const form = document.getElementById('contactpage');
+    form.addEventListener("submit", function(e) {
+        
+        validateForm(this)
+        console.log(hasErrors,'has')
+        
+        if(!hasErrors){
+            
+                 e.preventDefault();
+            
+            $("#contactpage .submit-text").addClass("d-none");
+            $("#contactpage .submitting").removeClass("d-none");
+            const data = new FormData(form);
+            const action = e.target.action;
+            fetch(action, {
+                method: 'POST',
+                body: data,
+            })
+            .then(() => {
+                fetch('https://script.google.com/macros/s/AKfycbzfDIUiPNlDDw_rK4d_F17DdZ9YCSLTWVM3S8HhPX1cRHH3WAmDbCWmyobzS7OPDTFz/exec', {
+                    method: 'POST',
+                    body: data,
+                })
+            })
+            .then(() => {
+                const currentPage = window.location.pathname;
+                if (currentPage === "/safeshark-test-link"){
+                    window.location = "/safeshark-thank-you";
+                }else{
+                window.location = "/thank-you";
+                }
+            })
+            
+        }
+        
+       
+    });
+</script>
